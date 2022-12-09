@@ -294,7 +294,7 @@ void ExecuteScheduler(int* User_Choice)
         char *argv[3];      // last element must be NULL
         argv[1] = NULL;     // for any algoritm except RR
         argv[2] = NULL;     // for RR
-        char buffer[10];
+        char buffer[10];    //buffer to convert from string to int
         switch (User_Choice[0]) {       // Algorithm must be compiled in the terminal first
             case 1:
                 argv[0] = "PHPF.out";

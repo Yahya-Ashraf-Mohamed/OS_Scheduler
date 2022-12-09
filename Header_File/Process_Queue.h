@@ -7,12 +7,14 @@
 #include <stdlib.h>
 #include "Process_Struct.h"
 
+
+typedef Process *DATA;
+
 typedef struct node_t_q node_t_q, *node, *queue;
 struct node_t_q {
     Process *val;
     node prev, next;
 };
-typedef Process *DATA;
 
 #define HEAD(q) q->prev
 #define TAIL(q) q->next
