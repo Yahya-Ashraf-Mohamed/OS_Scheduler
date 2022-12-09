@@ -1,5 +1,7 @@
 // Create queue of processes
 // original source (serach for:- "Doubly linked list"): http://rosettacode.org/wiki/Queue/Definition#C
+#ifndef OS_STARTER_CODE_PROCESS_QUEUE_H
+#define OS_STARTER_CODE_PROCESS_QUEUE_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -58,3 +60,6 @@ int ProcPeek(queue q, DATA *val) {
     *val = tmp->val;
     return 1;
 }
+
+
+#endif //OS_STARTER_CODE_PROCESSQUEUE_H

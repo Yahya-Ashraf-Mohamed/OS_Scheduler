@@ -1,5 +1,8 @@
 // Struct for a Process
 
+#ifndef OS_STARTER_CODE_PROCESS_H
+#define OS_STARTER_CODE_PROCESS_H
+
 #include "headers.h"
 
 typedef struct Processes {
@@ -27,3 +30,6 @@ void PrintProcess(Process *pProcess) {  //for testing
     printf("Remaining time = %d, ", pProcess->RemainTime);
     printf("Waiting time = %d\n", pProcess->WaitTime);
 }
+
+
+#endif

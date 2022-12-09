@@ -1,3 +1,6 @@
+#ifndef OS_STARTER_CODE_HEADERS_H
+#define OS_STARTER_CODE_HEADERS_H
+
 #include <stdio.h>      //if you don't use scanf/printf change this include
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -10,6 +13,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sys/queue.h>
 
 typedef short bool;
 #define true 1
@@ -23,7 +27,9 @@ typedef short bool;
 int * shmaddr;                 //
 //===============================
 
-
+//ftok data of IPC for communication between process_generator and scheduler
+const char Ftok_File[] = "Ftok_File.txt"; // File name used for communication
+const int Ftok_Key = 7; // Dummy number
 
 int getClk()
 {
@@ -65,3 +71,5 @@ void destroyClk(bool terminateAll)
         killpg(getpgrp(), SIGINT);
     }
 }
+
+#endif //OS_STARTER_CODE_HEADERS_H
