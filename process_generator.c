@@ -1,3 +1,9 @@
+/*
+==============================
+|| Created By YAHYA Mohamed ||
+==============================
+*/
+
 #include "Header_File/headers.h"
 #include "Header_File/Process_Queue.h"
 #include "Header_File/Message_Buffer.h"
@@ -23,6 +29,7 @@ pid_t Clock_Pid = 0;
 pid_t Scheduler_Pid = 0;
 queue Waiting_ProcessQueue;
 int Generated_MsgQueueId = 0;
+unsigned int Number_Of_Process = 0;  // Number of proccess readed from input file  
 
 int main(int argc, char * argv[])
 {
@@ -30,7 +37,7 @@ int main(int argc, char * argv[])
     Waiting_ProcessQueue = NewProcQueue();
 
     signal(SIGINT, clearResources);
-    // TODO Initialization
+    // Initialization
     // 1. Read the input files.
     ReadFile();
 
@@ -159,7 +166,6 @@ void ReadFile()
     
     unsigned int runtime_sum = 0;
     unsigned int runtime_squared_sum = 0;
-    unsigned int count = 0;
     
     while ((read = getline(&pLine, &len, pFile)) != -1)
     {
@@ -183,13 +189,13 @@ void ReadFile()
         pProcess->WaitTime = 0;
         runtime_sum += pProcess->Runtime;
         runtime_squared_sum += pProcess->Runtime * pProcess->Runtime;
-        count++;
+        Number_Of_Process++;
         ProcEnqueue(Waiting_ProcessQueue, pProcess);
 
         //PrintProcess(pProcess);       // For Testing
     }
 
-    double runtime_avg = (double) runtime_sum / count;
+    double runtime_avg = (double) runtime_sum / Number_Of_Process;
     printf("Process_Gen: Releasing file resources...\n");
     fclose(pFile);
     if (pLine)
@@ -291,10 +297,14 @@ void ExecuteScheduler(int* User_Choice)
     if (Scheduler_Pid == 0) {
         printf("Process_Gen: Scheduler forked successfully!\n");
         printf("Process_Gen: Executing scheduler...\n");
-        char *argv[3];      // last element must be NULL
-        argv[1] = NULL;     // for any algoritm except RR
-        argv[2] = NULL;     // for RR
-        char buffer[10];    //buffer to convert from string to int
+
+        char buffer[10];                //buffer to convert from string to int
+        sprintf(buffer, "%d", Number_Of_Process);
+        char *argv[4];                  // last element must be NULL
+        argv[1] = buffer;               // for knowing the number of process that will be sent
+        argv[2] = NULL;                 // for any algoritm except RR {Last element must be NULL}    
+        argv[3] = NULL;                 // for RR {as argv[2] = Quanta}
+               
         switch (User_Choice[0]) {       // Algorithm must be compiled in the terminal first
             case 1:
                 argv[0] = "PHPF.out";
@@ -310,7 +320,7 @@ void ExecuteScheduler(int* User_Choice)
                 break;
             case 4:
                 sprintf(buffer, "%d", User_Choice[1]);
-                argv[1] = buffer;
+                argv[2] = buffer;
                 argv[0] = "RR.out";
                 execv("RR.out", argv);
                 break;
@@ -339,6 +349,6 @@ void SendProcess(Process *pProcess)
     } 
     else 
     {
-        printf("Process_Gen: Process sent successfully!\n");
+        printf("Process_Gen: Process with id %d sent successfully!\n", msg.mProcess.Id);
     }
 }

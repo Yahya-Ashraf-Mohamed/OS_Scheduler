@@ -1,20 +1,18 @@
-#include "headers.h"
+/*
+==============================
+|| Created By YAHYA Mohamed ||
+==============================
+*/
 
-/* Modify this file as needed*/
+#include "Header_File/headers.h"
+#include "time.h"
+
 int remainingtime;
 
-int main(int agrc, char * argv[])
-{
-    initClk();
-    
-    //TODO it needs to get the remaining time from somewhere
-    //remainingtime = ??;
-    while (remainingtime > 0)
-    {
-        // remainingtime = ??;
-    }
-    
-    destroyClk(false);
-    
-    return 0;
+int main(int agrc, char *argv[]) {
+
+    int runtime = atoi(argv[1]);
+    while ((clock() / CLOCKS_PER_SEC) < runtime);
+
+    exit(EXIT_SUCCESS);
 }

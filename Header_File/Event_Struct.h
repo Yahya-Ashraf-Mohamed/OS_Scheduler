@@ -1,3 +1,9 @@
+/*
+==============================
+|| Created By YAHYA Mohamed ||
+==============================
+*/
+
 #ifndef OS_STARTER_CODE_EVENT_STRUCT_H
 #define OS_STARTER_CODE_EVENT_STRUCT_H
 
@@ -25,7 +31,7 @@ typedef struct Event_Struct {
 void PrintEvent_Console(const Event *pEvent) 
 { 
     printf("At time %d ", pEvent->Time_Step);
-    printf("process %d ", pEvent->pProcess->mId);
+    printf("process %d ", pEvent->pProcess->Id);
     switch (pEvent->Type) {
         case START:
             printf("started ");
@@ -33,7 +39,7 @@ void PrintEvent_Console(const Event *pEvent)
         case STOP:
             printf("stopped ");
             break;
-        case CONT:
+        case RESUMED:
             printf("resumed ");
             break;
         case FINISH:
@@ -53,7 +59,7 @@ void PrintEvent_Console(const Event *pEvent)
 void PrintEvent_File(const Event *pEvent, FILE *pFile) 
 { 
     fprintf(pFile, "At time %d ", pEvent->Time_Step);
-    fprintf(pFile, "process %d ", pEvent->pProcess->mId);
+    fprintf(pFile, "process %d ", pEvent->pProcess->Id);
     switch (pEvent->Type) {
         case START:
             fprintf(pFile, "started ");
@@ -61,7 +67,7 @@ void PrintEvent_File(const Event *pEvent, FILE *pFile)
         case STOP:
             fprintf(pFile, "stopped ");
             break;
-        case CONT:
+        case RESUMED:
             fprintf(pFile, "resumed ");
             break;
         case FINISH:

@@ -1,3 +1,9 @@
+/*
+==============================
+|| Created By YAHYA Mohamed ||
+==============================
+*/
+
 //Create Periority queue of processes
 //original source: http://rosettacode.org/wiki/Priority_queue#C
 
@@ -6,7 +12,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "ProcessStruct.h"
+#include "Process_Struct.h"
 
 typedef struct {
     int priority;
@@ -19,7 +25,7 @@ typedef struct {
     int size;
 } heap_t;
 
-void Push(heap_t *h, int priority, Process* data) {
+void HeapPush(heap_t *h, int priority, Process* data) {
     if (h->len + 1 >= h->size) {
         h->size = h->size ? h->size * 2 : 4;
         h->nodes = (node_t *) realloc(h->nodes, h->size * sizeof(node_t));
@@ -36,7 +42,7 @@ void Push(heap_t *h, int priority, Process* data) {
     h->len++;
 }
 
-Process* Pop(heap_t *h) {
+Process* HeapPop(heap_t *h) {
     int i, j, k;
     if (!h->len) {
         return NULL;
@@ -63,7 +69,7 @@ Process* Pop(heap_t *h) {
     return data;
 }
 
-Process* Peek(heap_t *h) {
+Process* HeapPeek(heap_t *h) {
     if (!h->len) {
         return NULL;
     }
@@ -71,7 +77,7 @@ Process* Peek(heap_t *h) {
     return h->nodes[1].data;
 }
 
-int isEmpty(heap_t *h) {
+int HeapEmpty(heap_t *h) {
     return h->len == 0;
 }
 

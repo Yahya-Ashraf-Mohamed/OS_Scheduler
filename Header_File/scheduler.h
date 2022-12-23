@@ -1,17 +1,37 @@
+/*
+==============================
+|| Created By YAHYA Mohamed ||
+==============================
+*/
+
 #ifndef OS_STARTER_CODE_SCHEDULER_H
 #define OS_STARTER_CODE_SCHEDULER_H
 
 
 #include "headers.h"
-#include "Headers/EventsQueue.h"
+#include "Events_Queue.h"
 
 Process *pCurrent_Running_Process = NULL; //pointer to the current running process
 EventQueue = NewEventQueue(); //init event queue
+int Received_MsgQueue_Id = 0; //msg queue id to receive processes from process_generator
 
 // in each process AddEvent(#state of the event {stopped, resumed, finished, started});
 
 
-void AddEvent(enum EventType Etype)
+// Initialize the IPC and Connect it the process_generator
+void InitIPC()
+{
+    key_t key = ftok(Ftok_File, Ftok_Key); //same parameters used in process_generator
+    Received_MsgQueue_Id = msgget(key, 0);
+    if (Received_MsgQueue_Id == -1) {
+        perror("RoundRobin: Round Robin IPC init failed!");
+        raise(SIGINT);
+    }
+    printf("RoundRobin: Round Robin IPC ready...\n");
+}
+
+
+void AddEvent(enum Event_Type Etype)
 {
     Event *pCurrentEvent = malloc(sizeof(Event));
     while (!pCurrentEvent) {
@@ -22,15 +42,16 @@ void AddEvent(enum EventType Etype)
 
     pCurrentEvent->Time_Step = getClk();
     if (Etype == FINISH) {
-        pCurrentEvent->Turn_Around_Time = getClk() - pCurrent_Running_Process->ArrivalTime;
-        pCurrentEvent->Weight_Turn_Around_Time = (double) pCurrentEvent->Turn_Around_Time / pCurrent_Running_Process->Runtime;
+        pCurrentEvent->Turn_Around_Time = getClk() - pCurrentProcess->ArrivalTime;
+        pCurrentEvent->Weight_Turn_Around_Time = (double) pCurrentEvent->Turn_Around_Time / pCurrentProcess->Runtime;
     }
-    pCurrentEvent->pProcess = pCurrent_Running_Process;
-    pCurrentEvent->Current_Wait_Time = pCurrent_Running_Process->WaitTime;
+    pCurrentEvent->pProcess = pCurrentProcess;
+    pCurrentEvent->Current_Wait_Time = pCurrentProcess->WaitTime;
     pCurrentEvent->Type = Etype;
-    pCurrentEvent->Current_Remaining_Time = pCurrent_Running_Process->RemainTime;
-    EventQueueEnqueue(EventQueue, pCurrentEvent);
+    pCurrentEvent->Current_Remaining_Time = pCurrentProcess->RemainTime;
+    EventQueueEnqueue(Event_Queue, pCurrentEvent);
 }
+
 
 void Log_AllEvents(unsigned int start_time, unsigned int end_time)
 {
@@ -45,17 +66,17 @@ void Log_AllEvents(unsigned int start_time, unsigned int end_time)
     Event *pNextEvent = NULL;
 
     // Loop until event queue is empty
-    while (EventQueueDequeue(gEventQueue, &pNextEvent)) 
+    while (EventQueueDequeue(Event_Queue, &pNextEvent)) 
     { 
         PrintEvent_Console(pNextEvent);
-        OutputEvent_File(pNextEvent, pFile);
-        if (pNextEvent->mType == FINISH) {
-            runtime_sum += pNextEvent->mpProcess->mRuntime;
-            waiting_sum += pNextEvent->mCurrentWaitTime;
+        PrintEvent_File(pNextEvent, pFile);
+        if (pNextEvent->Type == FINISH) {
+            runtime_sum += pNextEvent->pProcess->Runtime;
+            waiting_sum += pNextEvent->Current_Wait_Time;
             count++;
-            wta_sum += pNextEvent->mWTaTime;
-            wta_squared_sum += pNextEvent->mWTaTime * pNextEvent->mWTaTime;
-            free(pNextEvent->mpProcess);
+            wta_sum += pNextEvent->Weight_Turn_Around_Time;
+            wta_squared_sum += pNextEvent->Weight_Turn_Around_Time * pNextEvent->Weight_Turn_Around_Time;
+            free(pNextEvent->pProcess);
         }
         free(pNextEvent); //free memory allocated by the event
     }
@@ -69,7 +90,6 @@ void Log_AllEvents(unsigned int start_time, unsigned int end_time)
     printf("\nCPU utilization = %.2f\n", cpu_utilization);
     printf("Avg WTA = %.2f\n", avg_wta);
     printf("Avg Waiting = %.2f\n", avg_waiting);
-    printf("STD WTA = %.2f\n\n", std_wta);
 
     fprintf(pFile, "Avg WTA = %.2f\n", avg_wta);
     fprintf(pFile, "Avg Waiting = %.2f\n", avg_waiting);

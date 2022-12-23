@@ -1,3 +1,9 @@
+/*
+==============================
+|| Created By YAHYA Mohamed ||
+==============================
+*/
+
 // Struct for a Process
 
 #ifndef OS_STARTER_CODE_PROCESS_H
@@ -6,7 +12,7 @@
 #include "headers.h"
 
 typedef struct Processes {
-    pid_t mPid; //The pid of the process after the scheduler executes it
+    pid_t Pid; //The pid of the process after the scheduler executes it
     
     // Read data from file input
     unsigned int Id; // ID entered in the file
