@@ -1,10 +1,4 @@
-/*
-==============================
-|| Created By YAHYA Mohamed ||
-==============================
-*/
-
-//Create Priority queue of processes
+//Create Periority queue of processes
 //original source: http://rosettacode.org/wiki/Priority_queue#C
 
 #ifndef OS_STARTER_CODE_PROCESSHEAP_H

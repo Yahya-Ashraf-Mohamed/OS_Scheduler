@@ -1,9 +1,3 @@
-/*
-==============================
-|| Created By YAHYA Mohamed ||
-==============================
-*/
-
 #include "Header_File/headers.h"
 #include "Header_File/Process_Struct.h"
 #include "Header_File/Process_Heap.h"
@@ -59,7 +53,7 @@ int main(int argc, char *argv[]) {
     pause(); // Wait for the first process to arrive
     unsigned int start_time = getClk();     // Get the start time
 
-    while (ProcDequeue(Process_Queue, &pCurrentProcess) || Number_Of_Process!=0) // While processes queue is not empty or their is a process that will be sent
+    while (ProcDequeue(Process_Queue, &pCurrentProcess) /*|| Number_Of_Process!=0*/) // While processes queue is not empty or their is a process that will be sent
     {
 
         if (isTie()) // Check if their is a tie & if yes put them in the heap
@@ -76,14 +70,13 @@ int main(int argc, char *argv[]) {
             }
             continue; //after handling all tie processes skip below and dequeue a new process from main queue
         }
-
+        
         // Cretical section!
         Switch_Context_Flag = 0; //turn off switching   [LOCK]
         Execute_Process(); //execute current process
         while (!Switch_Context_Flag) //as long as this flag is set to zero keep pausing until Alarm Signal is sent
             pause(); // To Avoid Busy Waiting
     }
-
     unsigned int finish_time = getClk();    // Get the finish time
     Log_AllEvents(start_time, finish_time);
     raise(SIGINT);  // Clean & Exit   
@@ -173,7 +166,6 @@ void Alarm_Handler(int signum)
 
 
 void Execute_Process() {
-    
     // [Case 1] the process never ran before
     if (pCurrentProcess->Runtime == pCurrentProcess->RemainTime) 
     { 
@@ -184,7 +176,6 @@ void Execute_Process() {
             printf("RoundRobin: Trying again...\n");
             pCurrentProcess->Pid = fork();
         }
-
         // If I am child then execute the process
         if (!pCurrentProcess->Pid) 
         {
@@ -197,7 +188,6 @@ void Execute_Process() {
         }
 
         alarm(Quanta); // Generate an alarm to raise signal when quanta is over [Call SIGALRM]
-        
         //initial wait time for the process (Start time - Arival time)
         pCurrentProcess->WaitTime = getClk() - pCurrentProcess->ArrivalTime;
         AddEvent(START); // Create a start event
@@ -211,9 +201,7 @@ void Execute_Process() {
             perror(NULL);
             return;
         }
-
         alarm(Quanta); // Generate an alarm to raise signal when quanta is over [Call SIGALRM]
-
         pCurrentProcess->WaitTime += getClk() - pCurrentProcess->LastStop; //add the additional waiting time  (Current time - Last Stop time)
         AddEvent(RESUMED);
     }

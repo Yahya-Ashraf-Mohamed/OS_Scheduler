@@ -1,9 +1,3 @@
-/*
-==============================
-|| Created By YAHYA Mohamed ||
-==============================
-*/
-
 // Create queue of processes
 // original source (serach for:- "Doubly linked list"): http://rosettacode.org/wiki/Queue/Definition#C
 #ifndef OS_STARTER_CODE_PROCESS_QUEUE_H

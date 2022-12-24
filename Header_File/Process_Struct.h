@@ -1,9 +1,3 @@
-/*
-==============================
-|| Created By YAHYA Mohamed ||
-==============================
-*/
-
 // Struct for a Process
 
 #ifndef OS_STARTER_CODE_PROCESS_H

@@ -1,9 +1,3 @@
-/*
-==============================
-|| Created By YAHYA Mohamed ||
-==============================
-*/
-
 #include "Header_File/headers.h"
 #include "Header_File/Process_Queue.h"
 #include "Header_File/Message_Buffer.h"
@@ -70,12 +64,15 @@ int main(int argc, char * argv[])
         //peek the processes queue
         ProcPeek(Waiting_ProcessQueue, &pNextProcess);
 
+        bool is_time = false; //flag to indicate whether at least one process matches current time or not
+
         if (pNextProcess->ArrivalTime == current_time)
         {
+            is_time = true;
             SendProcess(pNextProcess); //send this process to the scheduler
             ProcDequeue(Waiting_ProcessQueue, &pNextProcess); //dequeue this process from the processes queue
-            free(pNextProcess); //free memory allocated by this process
             kill(Scheduler_Pid, SIGUSR1); //send SIGUSR1 to the scheduler
+            free(pNextProcess); //free memory allocated by this process
         }
     }
 

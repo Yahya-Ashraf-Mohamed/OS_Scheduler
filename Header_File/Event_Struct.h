@@ -1,9 +1,3 @@
-/*
-==============================
-|| Created By YAHYA Mohamed ||
-==============================
-*/
-
 #ifndef OS_STARTER_CODE_EVENT_STRUCT_H
 #define OS_STARTER_CODE_EVENT_STRUCT_H
 
