@@ -4,7 +4,7 @@
 ==============================
 */
 
-//Create Periority queue of processes
+//Create Priority queue of processes
 //original source: http://rosettacode.org/wiki/Priority_queue#C
 
 #ifndef OS_STARTER_CODE_PROCESSHEAP_H

@@ -75,8 +75,8 @@ int main(int argc, char * argv[])
             SendProcess(pNextProcess); //send this process to the scheduler
             ProcDequeue(Waiting_ProcessQueue, &pNextProcess); //dequeue this process from the processes queue
             free(pNextProcess); //free memory allocated by this process
+            kill(Scheduler_Pid, SIGUSR1); //send SIGUSR1 to the scheduler
         }
-        usleep(500000); //sleep for 0.5 sec
     }
 
     // Clear all resources || send 0 = normal exit || other = interrupt
