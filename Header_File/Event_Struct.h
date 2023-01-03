@@ -50,6 +50,7 @@ void PrintEvent_Console(const Event *pEvent)
     printf("\n");
 }
 
+//print event using the same output file format
 void PrintEvent_File(const Event *pEvent, FILE *pFile) 
 { 
     fprintf(pFile, "At time %d ", pEvent->Time_Step);

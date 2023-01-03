@@ -64,16 +64,14 @@ int main(int argc, char * argv[])
         //peek the processes queue
         ProcPeek(Waiting_ProcessQueue, &pNextProcess);
 
-        bool is_time = false; //flag to indicate whether at least one process matches current time or not
-
         if (pNextProcess->ArrivalTime == current_time)
         {
-            is_time = true;
             SendProcess(pNextProcess); //send this process to the scheduler
             ProcDequeue(Waiting_ProcessQueue, &pNextProcess); //dequeue this process from the processes queue
             kill(Scheduler_Pid, SIGUSR1); //send SIGUSR1 to the scheduler
             free(pNextProcess); //free memory allocated by this process
         }
+        usleep(900000); //sleep 0.9 sec
     }
 
     // Clear all resources || send 0 = normal exit || other = interrupt

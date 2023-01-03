@@ -19,7 +19,7 @@ void Process_Termination(int);
 int isTie();
 
 unsigned int Quanta;
-unsigned int Number_Of_Process;  // Number of proccess readed from input file  
+unsigned int Number_Of_Process;  // Number of proccess readed from input file 
 
 queue Process_Queue; //main processes queue
 event_queue Event_Queue; //queue for generated events to be excuted later
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     pause(); // Wait for the first process to arrive
     unsigned int start_time = getClk();     // Get the start time
 
-    while (ProcDequeue(Process_Queue, &pCurrentProcess) /*|| Number_Of_Process!=0*/) // While processes queue is not empty or their is a process that will be sent
+    while (ProcDequeue(Process_Queue, &pCurrentProcess) && Number_Of_Process!=0) // While processes queue is not empty or their is a process that will be sent
     {
 
         if (isTie()) // Check if their is a tie & if yes put them in the heap
@@ -63,8 +63,9 @@ int main(int argc, char *argv[]) {
             {   
                 pCurrentProcess = HeapPop(Process_Heap); // Get highest priority process
                 // Cretical section!
-                Switch_Context_Flag = 0; //turn off switching   [LOCK]
                 Execute_Process(); //execute current process
+                Switch_Context_Flag = 0; //turn off context switching   [LOCK]
+                
                 while (!Switch_Context_Flag) //as long as this flag is set to zero keep pausing until Alarm Signal is sent
                     pause(); // To Avoid Busy Waiting
             }
@@ -72,7 +73,7 @@ int main(int argc, char *argv[]) {
         }
         
         // Cretical section!
-        Switch_Context_Flag = 0; //turn off switching   [LOCK]
+        Switch_Context_Flag = 0; //turn off context switching   [LOCK]
         Execute_Process(); //execute current process
         while (!Switch_Context_Flag) //as long as this flag is set to zero keep pausing until Alarm Signal is sent
             pause(); // To Avoid Busy Waiting
@@ -99,6 +100,8 @@ void Process_Arrival_Handler(int signum)
 {
     //keep looping as long as a process was received in the current iteration
     while (!Receive_Process());
+    
+    signal(SIGUSR1, Process_Arrival_Handler); // Re-bind SIGUSR1 with Process_Arrival_Handler
 }
 
 
@@ -106,8 +109,9 @@ int Receive_Process()
 {
     Message msg;
     // receive a message or return immediately if their is no proecees
-    if (msgrcv(Received_MsgQueue_Id, (void *) &msg, sizeof(msg.mProcess), 0, IPC_NOWAIT) == -1) {
-        perror("RoundRobin: Error while receiving!");
+    int state = msgrcv(Received_MsgQueue_Id, (void *) &msg, sizeof(msg.mProcess), 0, IPC_NOWAIT);
+    if (state == -1) {
+        //perror("RoundRobin: Error while receiving!");
         return -1;
     }
 
@@ -162,6 +166,8 @@ void Alarm_Handler(int signum)
     AddEvent(STOP);
 
     Switch_Context_Flag = 1; // flag == 1 so main loop knows it's time to switch context     [UNLOCK]
+    
+    signal(SIGALRM, Alarm_Handler); // Re-bind SIGALRM with Alarm_Handler
 }
 
 
@@ -191,6 +197,8 @@ void Execute_Process() {
         //initial wait time for the process (Start time - Arival time)
         pCurrentProcess->WaitTime = getClk() - pCurrentProcess->ArrivalTime;
         AddEvent(START); // Create a start event
+    
+        Number_Of_Process = Number_Of_Process -1;
     } 
     // [Case 2] the process was stopped and its turn to resume
     else 
@@ -285,6 +293,8 @@ void Process_Termination(int signum)
 
     Switch_Context_Flag = 1; //set flag to 1 so main loop knows it's time to switch context as
                             // if the process Finished before quanta time Ends other process will start
+    
+    signal(SIGCHLD, Process_Termination); // Re-bind SIGCHLD with Process_Termination
 }
 
 int isTie() 

@@ -1,3 +1,0 @@
-1) compile clk.c
-2) compile each algorithm
-3) compile process_generator.c
